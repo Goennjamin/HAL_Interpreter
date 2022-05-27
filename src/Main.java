@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Main {
 
-    public void START(){
-
+    public boolean START(){
+        return true;
     }
 
     public void STOP(){

@@ -1,107 +1,456 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Scanner;
+
 
 
 public class Main {
 
-    public void START(){
+    static Scanner scn = new Scanner(System.in);
+
+    static boolean debug = false;
+
+    static double[] io = new double[2];
+
+    static double accu,pc,e_a,operand = 0;
+
+    static double[] register   = new double[16];
+
+    static double[] memory     = new double[100];
+
+
+    static public void START(){
+
 
     }
 
-    public void STOP(){
+    static public void STOP(){
+
 
     }
 
-    public void OUT(){
+    static public void OUT(){
+
+        io[1]=accu;
+        System.out.println(io[1]);
+    }
+
+    static public void IN(){
+
+        io[0] = scn.nextDouble();
+
+        accu = io[0];
 
     }
 
-    public void IN(){
+    static public void LOAD(){
+
+        accu = register[(int) operand];
 
     }
 
-    public void LOAD(){
+    static public void LOADNUM(){
+
+        accu = operand;
 
     }
 
-    public void LOADNUM(){
+    static public void STORE(){
+
+        register[(int) operand] = accu;
 
     }
 
-    public void STORE(){
+    static public void JUMPNEG(){
+
+        if(accu<0){
+            pc = operand;
+        }
 
     }
 
-    public void JUMPNEG(){
+    static public void JUMPPOS(){
+
+        if(accu>0){
+            pc = operand;
+        }
 
     }
 
-    public void JUMPPOS(){
+    static public void JUMPNULL(){
+
+        if(accu==0){
+            pc = operand;
+        }
 
     }
 
-    public void JUMPNULL(){
+    static public void JUMP(){
+
+        pc = operand;
 
     }
 
-    public void JUMP(){
+    static public void ADD(){
+
+        accu = accu + register[(int) operand];
 
     }
 
-    public void ADD(){
+    static public void ADDNUM(){
+
+        accu = accu + operand;
 
     }
 
-    public void ADDNUM(){
+    static public void SUB(){
+
+        accu = accu - register[(int) operand];
 
     }
 
-    public void SUB(){
+    static public void MUL(){
+
+        accu = accu * register[(int) operand];
 
     }
 
-    public void MUL(){
+    static public void DIV(){
+
+        accu = accu / register[(int) operand];
 
     }
 
-    public void SUBNUM(){
+    static public void SUBNUM(){
+
+        accu = accu - operand;
 
     }
 
-    public void MULNUM(){
+    static public void MULNUM(){
+
+        accu = accu * operand;
 
     }
 
-    public void DIVNUM(){
+    static public void DIVNUM(){
+
+        accu = accu / operand;
 
     }
 
-    public void LOADIND(){
+    static public void LOADIND(){
+
+        accu = memory[(int) register[(int) operand]];
 
     }
 
-    public void STOREIND(){
+    static public void STOREIND(){
+
+        memory[(int) register[(int) operand]] = accu;
 
     }
 
     public static void main(String[] args) throws Exception {
 
+        long startTime = System.nanoTime();
+
+
         File file = new File("/home/leonw/Dokumente/HAL_Programm.txt");
         BufferedReader br = new BufferedReader(new FileReader(file));
         String st;
 
-        ArrayList<String> Befehle = new ArrayList<>();
+        ArrayList<String[]> Befehle = new ArrayList<>();
 
 
         while((st = br.readLine()) != null){
 
-            Befehle.add(st);
+            Befehle.add(st.split(" "));
         }
 
-        int r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14,r15,Accu,PC = 0;
+        System.out.println("Debug? (y/n)");
+
+        String selection = scn.next();
+
+        if(selection == "y"){
+            debug = true;
+        }
 
 
+        for(int i = 0; i < Befehle.size(); i++){
+
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "START")){
+                START();
+
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "STOP")){
+                STOP();
+                break;
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "OUT")){
+
+                if(debug){
+
+                }
+                OUT();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "IN")){
+
+                if(debug){
+
+                }
+
+                IN();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "LOAD")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                LOAD();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "LOADNUM")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                LOADNUM();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "STORE")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                STORE();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "JUMPNEG")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                JUMPNEG();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "JUMPPOS")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                JUMPPOS();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "JUMPNULL")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                JUMPNULL();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "JUMP")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                JUMP();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "ADD")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                ADD();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "ADDNUM")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                ADDNUM();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "SUB")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                SUB();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "SUBNUM")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                SUBNUM();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "MUL")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                MUL();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "MULNUM")){
+
+                if(debug){
+
+                }operand = Double.parseDouble(Befehle.get(i)[2]);
+                MULNUM();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "DIV")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                DIVNUM();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "LOADIND")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                LOADIND();
+
+                if(debug){
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "LOADNUM")){
+
+                if(debug){
+
+                }
+
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+                LOADNUM();
+
+                if(debug){
+
+                }
+            }
+
+            pc++;
+
+        }  //TODO: Debug ausführlich machen
+
+
+
+        long endTime = System.nanoTime();
+        long duration = ((endTime - startTime) / 1000000) / 1000;
+        System.out.println("runtime: " + duration);
+        
     }
+
+
 }
 
 

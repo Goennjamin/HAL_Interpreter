@@ -11,14 +11,11 @@ public class Main {
 
     static boolean debug = false;
 
-    static double[] io = new double[2];
-
     static double accu,pc,e_a,operand = 0;
 
     static double[] register   = new double[16];
-
     static double[] memory     = new double[100];
-
+    static double[] io = new double[2];
 
     static public void START(){
 
@@ -173,7 +170,7 @@ public class Main {
 
         String selection = scn.next();
 
-        if(selection == "y"){
+        if(Objects.equals(selection, "y")){
             debug = true;
         }
 
@@ -195,11 +192,18 @@ public class Main {
 
                 if(debug){
 
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("E/A 1: " + io[1]);
+
                 }
                 OUT();
 
                 if(debug){
 
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("E/A 1: " + io[1]);
                 }
             }
 
@@ -207,67 +211,111 @@ public class Main {
 
                 if(debug){
 
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("E/A 0: " + io[0]);
+
                 }
 
                 IN();
 
                 if(debug){
 
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("E/A 0: " + io[0]);
+
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "LOAD")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
                 LOAD();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "LOADNUM")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
                 LOADNUM();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
 
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "STORE")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
                 STORE();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "JUMPNEG")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("PC: " + pc);
+                    System.out.println("Operand: " + operand);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
                 JUMPNEG();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("PC: " + pc);
+                    System.out.println("Operand: " + operand);
 
                 }
             }
@@ -276,12 +324,22 @@ public class Main {
 
                 if(debug){
 
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("PC: " + pc);
+                    System.out.println("Operand: " + operand);
+
                 }
 
                 operand = Double.parseDouble(Befehle.get(i)[2]);
                 JUMPPOS();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("PC: " + pc);
+                    System.out.println("Operand: " + operand);
 
                 }
             }
@@ -290,6 +348,11 @@ public class Main {
 
                 if(debug){
 
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("PC: " + pc);
+                    System.out.println("Operand: " + operand);
+
                 }
 
                 operand = Double.parseDouble(Befehle.get(i)[2]);
@@ -297,156 +360,301 @@ public class Main {
 
                 if(debug){
 
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("PC: " + pc);
+                    System.out.println("Operand: " + operand);
+
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "JUMP")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("PC: " + pc);
+                    System.out.println("Operand: " + operand);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 JUMP();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("PC: " + pc);
+                    System.out.println("Operand: " + operand);
 
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "ADD")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 ADD();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "ADDNUM")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Operand: " + operand);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 ADDNUM();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Operand: " + operand);
 
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "SUB")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 SUB();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "SUBNUM")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Operand: " + operand);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 SUBNUM();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Operand: " + operand);
 
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "MUL")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 MUL();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "MULNUM")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
 
-                }operand = Double.parseDouble(Befehle.get(i)[2]);
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Operand: " + operand);
+
+                }
+
                 MULNUM();
 
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Operand: " + operand);
 
                 }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "DIV")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
 
                 }
 
+
+                DIV();
+
+                if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
+
+                }
+            }
+
+            if(Objects.equals(Befehle.get((int) pc)[1], "DIVNUM")){
+
                 operand = Double.parseDouble(Befehle.get(i)[2]);
+
+                if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Operand: " + operand);
+
+                }
+
                 DIVNUM();
 
                 if(debug){
 
-                }
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Operand: " + operand);
+
+            }
             }
 
             if(Objects.equals(Befehle.get((int) pc)[1], "LOADIND")){
 
+                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 if(debug){
+
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
+                    System.out.println("Memory m: " + memory[(int) register[(int) operand]]);
 
                 }
 
-                operand = Double.parseDouble(Befehle.get(i)[2]);
+
                 LOADIND();
 
+
                 if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
+                    System.out.println("Memory m: " + memory[(int) register[(int) operand]]);
 
                 }
             }
 
-            if(Objects.equals(Befehle.get((int) pc)[1], "LOADNUM")){
-
-                if(debug){
-
-                }
+            if(Objects.equals(Befehle.get((int) pc)[1], "STOREIND")){
 
                 operand = Double.parseDouble(Befehle.get(i)[2]);
-                LOADNUM();
 
                 if(debug){
 
+                    System.out.println("Before:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
+                    System.out.println("Memory m: " + memory[(int) register[(int) operand]]);
+
+                }
+
+
+                STOREIND();
+
+
+                if(debug){
+
+                    System.out.println("After:");
+                    System.out.println("Accu: " + accu);
+                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
+                    System.out.println("Memory m: " + memory[(int) register[(int) operand]]);
+
                 }
             }
+
+            if(debug){
+
+
+                System.out.println("For next line write n");
+                String next = scn.next();
+
+
+            }
+
 
             pc++;
 
-        }  //TODO: Debug ausführlich machen
+        }
 
 
 
         long endTime = System.nanoTime();
         long duration = ((endTime - startTime) / 1000000) / 1000;
-        System.out.println("runtime: " + duration);
+        System.out.println("Runtime: " + duration + " Sekunden");
         
     }
 

@@ -1,666 +1,178 @@
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintStream;
 import java.util.Scanner;
-
-
+import java.util.Vector;
 
 public class Main {
-
-    static Scanner scn = new Scanner(System.in);
-
-    static boolean debug = false;
-
-    static double accu,pc,e_a,operand = 0;
-
-    static double[] register   = new double[16];
-    static double[] memory     = new double[100];
-    static double[] io = new double[2];
-
-    static public void START(){
-
-
-    }
-
-    static public void STOP(){
-
-
-    }
-
-    static public void OUT(){
-
-        io[1]=accu;
-        System.out.println(io[1]);
-    }
-
-    static public void IN(){
-
-        io[0] = scn.nextDouble();
-
-        accu = io[0];
-
-    }
-
-    static public void LOAD(){
-
-        accu = register[(int) operand];
-
-    }
-
-    static public void LOADNUM(){
-
-        accu = operand;
-
-    }
-
-    static public void STORE(){
-
-        register[(int) operand] = accu;
-
-    }
-
-    static public void JUMPNEG(){
-
-        if(accu<0){
-            pc = operand;
-        }
-
-    }
-
-    static public void JUMPPOS(){
-
-        if(accu>0){
-            pc = operand;
-        }
-
-    }
-
-    static public void JUMPNULL(){
-
-        if(accu==0){
-            pc = operand;
-        }
-
-    }
-
-    static public void JUMP(){
-
-        pc = operand;
-
-    }
-
-    static public void ADD(){
-
-        accu = accu + register[(int) operand];
-
-    }
-
-    static public void ADDNUM(){
-
-        accu = accu + operand;
-
-    }
-
-    static public void SUB(){
-
-        accu = accu - register[(int) operand];
-
-    }
-
-    static public void MUL(){
-
-        accu = accu * register[(int) operand];
-
-    }
-
-    static public void DIV(){
-
-        accu = accu / register[(int) operand];
-
-    }
-
-    static public void SUBNUM(){
-
-        accu = accu - operand;
-
-    }
-
-    static public void MULNUM(){
-
-        accu = accu * operand;
-
-    }
-
-    static public void DIVNUM(){
-
-        accu = accu / operand;
-
-    }
-
-    static public void LOADIND(){
-
-        accu = memory[(int) register[(int) operand]];
-
-    }
-
-    static public void STOREIND(){
-
-        memory[(int) register[(int) operand]] = accu;
-
-    }
+    private static float[] mem = new float[100];
+    private static float[] r = new float[15];
+    private static float accu = 0.0f;
+    private static int pc = 0;
+    private static float[] io = new float[2];
+    private static Scanner scn = new Scanner(System.in);
 
     public static void main(String[] args) throws Exception {
-
-        long startTime = System.nanoTime();
-
-
-        File file = new File("/home/leonw/Dokumente/HAL_Programm.txt");
+        long start = System.nanoTime();
+        File file = new File(args[0]);
         BufferedReader br = new BufferedReader(new FileReader(file));
-        String st;
-
-        ArrayList<String[]> Befehle = new ArrayList<>();
-
-
-        while((st = br.readLine()) != null){
-
-            Befehle.add(st.split(" "));
+        String str;
+        int modus = 0;
+        Vector<String[]> lines = new Vector<>();
+        while ((str = br.readLine()) != null) {
+            lines.add(str.split(" "));
         }
 
-        System.out.println("Debug? (y/n)");
+        System.out.print("Start debugging? 0=No , 1=Yes\nNumber: ");
+        modus = scn.nextInt();
 
-        String selection = scn.next();
-
-        if(Objects.equals(selection, "y")){
-            debug = true;
+        if(Integer.parseInt(lines.firstElement()[0])!=pc){
+            throw new Exception("syntax-error at line " + pc + ": wrong line number.");
         }
 
+        if(lines.firstElement()[1].equals("START")){
+            if (modus == 1) System.out.println(lines.firstElement()[0] + " " + lines.firstElement()[1] + ": start");
+        }
+        else{
+            throw new Exception("semantic-error at line " + pc + ": program not started");
+        }
 
-        for(int i = 0; i < Befehle.size(); i++){
+        pc++;
+        while (pc < lines.size()-1) {
+            int l0 = Integer.parseInt(lines.elementAt(pc)[0]);
+            String l1 = lines.elementAt(pc)[1];
+            int l2 = Integer.parseInt(lines.elementAt(pc)[2]);
 
 
-            if(Objects.equals(Befehle.get((int) pc)[1], "START")){
-                START();
-
+            if (Integer.parseInt(lines.elementAt(pc)[0]) != pc) {
+                if (modus == 1) System.out.println(l0 + " " + l1 + " " + l2);
+                throw new Exception("syntax-error at line " + pc + ": wrong line number.");
             }
 
-            if(Objects.equals(Befehle.get((int) pc)[1], "STOP")){
-                STOP();
-                break;
+            switch (lines.elementAt(pc)[1]) {
+                case "START":
+                    if (modus == 1) System.out.println(l0 + " " + l1);
+                    throw new Exception("semantic-error at line " + pc + ": forbidden use of keyword \"START\".");
+                case "STOP":
+                    if (modus == 1) System.out.println(l0 + " " + l1);
+                    throw new Exception("syntax-error at line " + pc + ": forbidden use of keyword \"STOP\".");
+                case "OUT":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": io[1](" + io[1] + ")=accu(" + accu + ")");
+                    io[1] = accu;
+                    System.out.println(io[1]);
+                    break;
+                case "IN":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + accu + ")=io[0](" + io[0] + ")");
+                    io[0] = scn.nextFloat();
+                    accu = io[0];
+                    break;
+                case "LOAD":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + accu + ")=r[" + l2 + "](" + r[l2] + ")");
+                    accu = r[l2];
+                    break;
+                case "LOADNUM":
+                    if (modus == 1) System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + accu + ")=" + l2);
+                    accu = l2;
+                    break;
+                case "STORE":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": r[" + l2 + "](" + r[l2] + ")=accu(" + accu + ")");
+                    r[l2] = accu;
+                    break;
+                case "JUMPNEG":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + accu + ")<0 -> pc(" + pc + ")=" + l2);
+                    if (accu < 0) pc = l2 - 1;
+                    break;
+                case "JUMPPOS":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + accu + ")>0 -> pc(" + pc + ")=" + l2);
+                    if (accu > 0) pc = l2 - 1;
+                    break;
+                case "JUMPNULL":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + accu + ")=0 -> pc(" + pc + ")=" + l2);
+                    if (accu == 0) pc = l2 - 1;
+                    break;
+                case "JUMP":
+                    if (modus == 1) System.out.println(l0 + " " + l1 + " " + l2 + ": pc(" + pc + ")=" + l2);
+                    pc = l2-1;
+                    break;
+                case "ADD":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + (accu + r[l2]) + ")=accu(" + accu + ")+r[" + l2 + "](" + r[l2] + ")");
+                    accu += r[l2];
+                    break;
+                case "ADDNUM":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + (accu + l2) + ")=accu(" + accu + ")+" + l2);
+                    accu += l2;
+                    break;
+                case "SUB":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + (accu - r[l2]) + ")=accu(" + accu + ")-r[" + l2 + "](" + r[l2] + ")");
+                    accu -= r[l2];
+                    break;
+                case "MUL":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + (accu * r[l2]) + ")=accu(" + accu + ")*r[" + l2 + "](" + r[l2] + ")");
+                    accu *= r[l2];
+                    break;
+                case "DIV":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + (accu / r[l2]) + ")=accu(" + accu + ")/r[" + l2 + "](" + r[l2] + ")");
+                    accu /= r[l2];
+                    break;
+                case "SUBNUM":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + (accu - l2) + ")=accu(" + accu + ")-" + l2);
+                    accu -= l2;
+                    break;
+                case "MULNUM":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + (accu * l2) + ")=accu(" + accu + ")*" + l2);
+                    accu *= l2;
+                    break;
+                case "DIVNUM":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + (accu / l2) + ")=accu(" + accu + ")/" + l2);
+                    accu /= l2;
+                    break;
+                case "LOADIND":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": accu(" + accu + ")=mem[" + (int) r[l2] + "](" + mem[(int) r[l2]]+")");
+                    accu = mem[(int) r[l2]];
+                    break;
+                case "STOREIND":
+                    if (modus == 1)
+                        System.out.println(l0 + " " + l1 + " " + l2 + ": mem[" + (int) r[l2] + "](" + mem[(int) r[l2]]+")=accu("+accu+")");
+                    mem[(int) r[l2]] = accu;
+                    break;
+                default:
+                    if (modus == 1) System.out.println(l0 + " " + l1 + " " + l2);
+                    throw new Exception("syntax-error at line " + pc + ": command not found.");
             }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "OUT")){
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("E/A 1: " + io[1]);
-
-                }
-                OUT();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("E/A 1: " + io[1]);
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "IN")){
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("E/A 0: " + io[0]);
-
-                }
-
-                IN();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("E/A 0: " + io[0]);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "LOAD")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-
-                LOAD();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "LOADNUM")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-
-                }
-
-                LOADNUM();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "STORE")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-
-                STORE();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "JUMPNEG")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("PC: " + pc);
-                    System.out.println("Operand: " + operand);
-
-                }
-
-                JUMPNEG();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("PC: " + pc);
-                    System.out.println("Operand: " + operand);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "JUMPPOS")){
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("PC: " + pc);
-                    System.out.println("Operand: " + operand);
-
-                }
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-                JUMPPOS();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("PC: " + pc);
-                    System.out.println("Operand: " + operand);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "JUMPNULL")){
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("PC: " + pc);
-                    System.out.println("Operand: " + operand);
-
-                }
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-                JUMPNULL();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("PC: " + pc);
-                    System.out.println("Operand: " + operand);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "JUMP")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("PC: " + pc);
-                    System.out.println("Operand: " + operand);
-
-                }
-
-
-                JUMP();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("PC: " + pc);
-                    System.out.println("Operand: " + operand);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "ADD")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-
-
-                ADD();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "ADDNUM")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Operand: " + operand);
-
-                }
-
-
-                ADDNUM();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Operand: " + operand);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "SUB")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-
-
-                SUB();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "SUBNUM")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Operand: " + operand);
-
-                }
-
-
-                SUBNUM();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Operand: " + operand);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "MUL")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-
-
-                MUL();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "MULNUM")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Operand: " + operand);
-
-                }
-
-                MULNUM();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Operand: " + operand);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "DIV")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-
-
-                DIV();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "DIVNUM")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Operand: " + operand);
-
-                }
-
-                DIVNUM();
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Operand: " + operand);
-
-            }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "LOADIND")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-                    System.out.println("Memory m: " + memory[(int) register[(int) operand]]);
-
-                }
-
-
-                LOADIND();
-
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-                    System.out.println("Memory m: " + memory[(int) register[(int) operand]]);
-
-                }
-            }
-
-            if(Objects.equals(Befehle.get((int) pc)[1], "STOREIND")){
-
-                operand = Double.parseDouble(Befehle.get(i)[2]);
-
-                if(debug){
-
-                    System.out.println("Before:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-                    System.out.println("Memory m: " + memory[(int) register[(int) operand]]);
-
-                }
-
-
-                STOREIND();
-
-
-                if(debug){
-
-                    System.out.println("After:");
-                    System.out.println("Accu: " + accu);
-                    System.out.println("Register r" + (int) operand + ": "+ register[(int) operand]);
-                    System.out.println("Memory m: " + memory[(int) register[(int) operand]]);
-
-                }
-            }
-
-            if(debug){
-
-
-                System.out.println("For next line write n");
-                String next = scn.next();
-
-
-            }
-
-
             pc++;
-
         }
 
+        if(Integer.parseInt(lines.lastElement()[0])!=pc){
+            throw new Exception("syntax-error at line " + pc + ": wrong line number.");
+        }
 
+        if(lines.lastElement()[1].equals("STOP")){
+            if (modus == 1) System.out.println(lines.lastElement()[0] + " " + lines.lastElement()[1] + ": stop");
+        }
+        else{
+            throw new Exception("semantic-error at line " + pc + ": program not ending");
+        }
 
-        long endTime = System.nanoTime();
-        long duration = ((endTime - startTime) / 1000000) / 1000;
-        System.out.println("Runtime: " + duration + " Sekunden");
-        
+        long end = System.nanoTime();
+        long duration = (end-start)/1000000000;
+        System.out.println("Laufzeit: "+duration+"s");
+        return;
     }
-
-
 }
-
-
-
-
